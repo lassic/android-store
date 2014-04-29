@@ -14,6 +14,7 @@ SoomlaAndroidStoreTest/.idea/
 SoomlaAndroidStoreTest/out/
 SoomlaAndroidStoreTest/gen/
 
+build
 docs/*
 
 .DS_Store
