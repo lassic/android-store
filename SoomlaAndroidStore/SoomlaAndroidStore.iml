@@ -72,7 +72,10 @@
     <content url="file://$MODULE_DIR$/../submodules/android-store-google-play/src">
       <sourceFolder url="file://$MODULE_DIR$/../submodules/android-store-google-play/src" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="Android 4.4.2" jdkType="Android SDK" />
+    <content url="file://$MODULE_DIR$/../submodules/android-store-google-play/src">
+      <sourceFolder url="file://$MODULE_DIR$/../submodules/android-store-google-play/src" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="appcompat-v7-19.1.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-19.1.0" level="project" />
