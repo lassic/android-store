@@ -34,6 +34,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.soomla.blueprint.rewards.Reward;
 import com.soomla.social.ISocialCenter;
 import com.soomla.social.SoomlaSocialAuthCenter;
 import com.soomla.social.actions.ISocialAction;
@@ -43,7 +44,7 @@ import com.soomla.social.events.SocialActionPerformedEvent;
 import com.soomla.social.events.SocialAuthProfileEvent;
 import com.soomla.social.events.SocialLoginErrorEvent;
 import com.soomla.social.events.SocialLoginEvent;
-import com.soomla.social.model.GameReward;
+import com.soomla.social.model.SocialVirtualItemReward;
 import com.soomla.store.BusProvider;
 import com.squareup.otto.Subscribe;
 
@@ -135,8 +136,8 @@ public class ExampleSocialActivity extends Activity {
                         ISocialCenter.FACEBOOK, message, false);
 
                 // optionally attach rewards to it
-                GameReward gameReward = new GameReward(updateStatusAction, mItemId, mItemAmount);
-                updateStatusAction.addGameReward(gameReward);
+                Reward gameReward = new SocialVirtualItemReward("Update Status for VG", mItemId, mItemAmount);
+                updateStatusAction.getRewards().add(gameReward);
 
                 // perform social action
                 soomlaSocialAuthCenter.updateStatusAsync(updateStatusAction);
@@ -159,8 +160,8 @@ public class ExampleSocialActivity extends Activity {
                         "https://s3.amazonaws.com/soomla_images/website/img/500_background.png");
 
                 // optionally attach rewards to it
-                GameReward muffinsReward = new GameReward(updateStoryAction, "muffins_50", 1);
-                updateStoryAction.addGameReward(muffinsReward);
+                Reward muffinsReward = new SocialVirtualItemReward("Update Story for VG", mItemId, mItemAmount);
+                updateStoryAction.getRewards().add(muffinsReward);
 
                 try {
                     soomlaSocialAuthCenter.updateStoryAsync(updateStoryAction);
@@ -245,7 +246,7 @@ public class ExampleSocialActivity extends Activity {
         mBtnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                soomlaSocialAuthCenter.signOut(mBtnShare.getContext(), providerName);
+                soomlaSocialAuthCenter.logout(mBtnShare.getContext(), providerName);
                 updateUIOnLogout();
 
                 // re-enable share button login

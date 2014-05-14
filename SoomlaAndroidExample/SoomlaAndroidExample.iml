@@ -9,6 +9,9 @@
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
+    <content url="file://$MODULE_DIR$/../../android-blueprint/SoomlaAndroidBlueprint/src">
+      <sourceFolder url="file://$MODULE_DIR$/../../android-blueprint/SoomlaAndroidBlueprint/src" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../../android-social/SoomlaSocialLib/src/main/java">
       <sourceFolder url="file://$MODULE_DIR$/../../android-social/SoomlaSocialLib/src/main/java" isTestSource="false" />
     </content>
