@@ -18,6 +18,7 @@ package com.soomla.example;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.http.AndroidHttpClient;
@@ -35,8 +36,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.soomla.blueprint.rewards.Reward;
+import com.soomla.social.IContextProvider;
 import com.soomla.social.ISocialCenter;
-import com.soomla.social.SoomlaSocialAuthCenter;
+import com.soomla.social.ISocialProvider;
 import com.soomla.social.actions.ISocialAction;
 import com.soomla.social.actions.UpdateStatusAction;
 import com.soomla.social.actions.UpdateStoryAction;
@@ -44,7 +46,8 @@ import com.soomla.social.events.SocialActionPerformedEvent;
 import com.soomla.social.events.SocialAuthProfileEvent;
 import com.soomla.social.events.SocialLoginErrorEvent;
 import com.soomla.social.events.SocialLoginEvent;
-import com.soomla.social.model.SocialVirtualItemReward;
+import com.soomla.social.rewards.SocialVirtualItemReward;
+import com.soomla.social.providers.socialauth.SoomlaSocialAuthCenter;
 import com.soomla.store.BusProvider;
 import com.squareup.otto.Subscribe;
 
@@ -63,6 +66,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import com.soomla.example.R;
 
 public class ExampleSocialActivity extends Activity {
 
@@ -82,8 +86,9 @@ public class ExampleSocialActivity extends Activity {
     private Button mBtnUpdateStory;
     private EditText mEdtStory;
 
-//    private SoomlaSocialAuthCenter soomlaSocialAuthCenter;
     private ISocialCenter soomlaSocialAuthCenter;
+    private ISocialProvider socialAuthFacebookProvider;
+    private IContextProvider mCtxProvider;
 
     private ProgressDialog mProgressDialog;
 
@@ -103,12 +108,26 @@ public class ExampleSocialActivity extends Activity {
         if(extras != null) {
             mItemId = extras.getString("id");
             mItemAmount = extras.getInt("amount", 1);
-            mItemName = extras.getString("name", "?");
+            mItemName = extras.getString("name");
             mItemResId = extras.getInt("iconResId", R.drawable.ic_launcher);
         }
 
+        mCtxProvider = new IContextProvider() {
+            @Override
+            public Activity getActivity() {
+                return ExampleSocialActivity.this;
+            }
+
+            @Override
+            public Context getContext() {
+                return ExampleSocialActivity.this;
+            }
+        };
+
         soomlaSocialAuthCenter = new SoomlaSocialAuthCenter();
-        soomlaSocialAuthCenter.addSocialProvider(ISocialCenter.FACEBOOK, R.drawable.facebook);
+//        soomlaSocialAuthCenter.addSocialProvider(ISocialCenter.FACEBOOK, R.drawable.facebook);
+        socialAuthFacebookProvider = soomlaSocialAuthCenter.setCurrentProvider(
+                mCtxProvider, ISocialCenter.FACEBOOK);
 
         final TextView vItemDisplay = (TextView) findViewById(R.id.vItem);
         if(vItemDisplay != null) {
@@ -136,11 +155,12 @@ public class ExampleSocialActivity extends Activity {
                         ISocialCenter.FACEBOOK, message, false);
 
                 // optionally attach rewards to it
-                Reward gameReward = new SocialVirtualItemReward("Update Status for VG", mItemId, mItemAmount);
+                Reward gameReward = new SocialVirtualItemReward("Update Status for VG",
+                        mItemId, mItemAmount);
                 updateStatusAction.getRewards().add(gameReward);
 
                 // perform social action
-                soomlaSocialAuthCenter.updateStatusAsync(updateStatusAction);
+                socialAuthFacebookProvider.updateStatusAsync(updateStatusAction);
             }
         });
 
@@ -160,11 +180,12 @@ public class ExampleSocialActivity extends Activity {
                         "https://s3.amazonaws.com/soomla_images/website/img/500_background.png");
 
                 // optionally attach rewards to it
-                Reward muffinsReward = new SocialVirtualItemReward("Update Story for VG", mItemId, mItemAmount);
+                Reward muffinsReward = new SocialVirtualItemReward("Update Story for VG",
+                        mItemId, mItemAmount);
                 updateStoryAction.getRewards().add(muffinsReward);
 
                 try {
-                    soomlaSocialAuthCenter.updateStoryAsync(updateStoryAction);
+                    socialAuthFacebookProvider.updateStoryAsync(updateStoryAction);
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
@@ -173,7 +194,7 @@ public class ExampleSocialActivity extends Activity {
 
         mBtnShare = (Button) findViewById(R.id.btnShare);
 //        soomlaSocialAuthCenter.registerShareButton(mBtnShare);
-        soomlaSocialAuthCenter.login(this, ISocialCenter.FACEBOOK);
+        socialAuthFacebookProvider.login();
 
         mProgressDialog.setMessage("logging in...");
         mProgressDialog.show();
@@ -209,7 +230,7 @@ public class ExampleSocialActivity extends Activity {
         // Please avoid sending duplicate message. Social Media Providers
         // block duplicate messages.
 
-        soomlaSocialAuthCenter.getProfileAsync();
+        socialAuthFacebookProvider.getProfileAsync();
 
         updateUIOnLogin(providerName);
     }
@@ -246,7 +267,7 @@ public class ExampleSocialActivity extends Activity {
         mBtnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                soomlaSocialAuthCenter.logout(mBtnShare.getContext(), providerName);
+                socialAuthFacebookProvider.logout();
                 updateUIOnLogout();
 
                 // re-enable share button login
