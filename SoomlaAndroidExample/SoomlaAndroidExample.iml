@@ -46,6 +46,7 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/android-support-v4.jar!/" />
+          <root url="jar://$MODULE_DIR$/../billing-services/google-play/AndroidStoreGooglePlay.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
